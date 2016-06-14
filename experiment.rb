@@ -3,6 +3,7 @@ require 'byebug'
 require 'browsermob-proxy'
 require 'capybara'
 require 'capybara/dsl'
+require 'capybara/rspec'
 
 class EdgeTest
   include Capybara::DSL
