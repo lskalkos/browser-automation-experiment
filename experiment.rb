@@ -1,26 +1,50 @@
 require 'selenium-webdriver'
 require 'byebug'
-gem 'selenium-client'
-require 'selenium-client'
 require 'browsermob-proxy'
 
-server = BrowserMob::Proxy::Server.new("/Users/liaskalkos/Desktop/SimpleReach/experiment/browsermob-proxy-2.1.1/bin/browsermob-proxy", log: true) #=> #<BrowserMob::Proxy::Server:0x000001022c6ea8 ...>
-byebug
-server.start
+class EdgeTest
+  attr_accessor :url
 
-proxy=server.create_proxy
-profile = Selenium::WebDriver::Chrome::Profile.new
-profile.proxy = proxy.selenium_proxy
+  def initialize(url)
+    @url = url
+    chromedriver_path = "./chromedriver"
+    Selenium::WebDriver::Chrome.driver_path = chromedriver_path
+  end
 
-# Specify the driver path
-chromedriver_path = "/Users/liaskalkos/Desktop/SimpleReach/experiment/chromedriver"
-Selenium::WebDriver::Chrome.driver_path = chromedriver_path
-driver = Selenium::WebDriver.for :chrome, :profile => profile
-proxy.new_har("google")
-driver.get('http://www.google.com')
+  def run
+    server.start
+    proxy.new_har("#{url}")
+    driver.get(url)
+    har.save_to("#{temp_file}")
+    proxy.close
+    driver.quit
+    `har #{temp_file}`
+  end
 
-byebug
+  def server
+    @server ||= BrowserMob::Proxy::Server.new("./browsermob-proxy-2.1.1/bin/browsermob-proxy", log: true)
+  end
 
-har = proxy.har
+  def driver
+    selenium_proxy = Selenium::WebDriver::Proxy.new(:http => proxy.selenium_proxy.http)
+    caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => selenium_proxy)
+    @driver ||= Selenium::WebDriver.for(:chrome, :desired_capabilities => caps)
+  end
 
 
+  def proxy
+    @proxy ||= server.create_proxy
+  end
+
+  def har
+    proxy.har
+  end
+
+  def temp_file
+    "/tmp/test.har"
+  end
+
+  def har_entries
+    har.entries
+  end
+end
