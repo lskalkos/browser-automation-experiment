@@ -6,6 +6,7 @@ describe "Edge Request", :type => :feature do
     @edgetest = EdgeTest.new(url)
     @edgetest.run
     visit(url)
+    page.execute_script('window.scrollTo(0,100000)')
   end
 
   after(:all) do
@@ -18,11 +19,9 @@ describe "Edge Request", :type => :feature do
 
   it 'has a successful response' do
     expect(@edgetest.n_requests.first.response.status).to eq(200)
-    @edgetest.stop
   end
 
   it 'time on site fires' do
     expect(@edgetest.t_requests.empty?).to eq(false)
-    @edgetest.stop
   end
 end
