@@ -19,12 +19,10 @@ class EdgeTest
     server.start
     setup_driver
     proxy.new_har("#{url}")
-    visit url
-    # driver.get(url)
-    har.save_to("#{temp_file}")
+  end
+
+  def stop
     proxy.close
-    # driver.quit
-    `har #{temp_file}`
   end
 
   def server
@@ -40,8 +38,6 @@ class EdgeTest
     end
 
     Capybara.current_driver = :chrome
-
-    # @driver ||= Selenium::WebDriver.for(:chrome, :desired_capabilities => caps)
   end
 
 
@@ -50,7 +46,7 @@ class EdgeTest
   end
 
   def har
-    proxy.har
+    @har ||= proxy.har
   end
 
   def temp_file
@@ -59,5 +55,21 @@ class EdgeTest
 
   def har_entries
     har.entries
+  end
+
+  def edge_requests
+    @edge_requests ||= har_entries.select{|e| e.request.url.include?('edge') }
+  end
+
+  def n_requests
+    @n_requests ||= edge_requests.select{|e| e.request.url.include?('/n?')}
+  end
+
+  def t_requests
+    @t_requests ||= edge_requests.select{|e| e.request.url.include?('/t?')}
+  end
+
+  def event_requests
+    @event_requests ||= edge_requests.select{|e| e.request.url.include?('/event?')}
   end
 end
