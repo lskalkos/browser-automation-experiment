@@ -5,7 +5,8 @@ def desktop_check
 end
 
 describe "Edge Request", :type => :feature do
-  url = 'http://qz.com/706493/alibabas-jack-ma-the-problem-with-counterfeits-is-theyre-better-quality-than-authentic-luxury-goods/'
+  base_url = 'http://qz.com/706493/alibabas-jack-ma-the-problem-with-counterfeits-is-theyre-better-quality-than-authentic-luxury-goods/'
+  protocol 
   before(:all) do
     EdgeTest.run
   end
@@ -69,6 +70,20 @@ describe "Edge Request", :type => :feature do
         expect(@query_param_desktop_test.request_parameters["url"]).to eq(url)
       end
     end
+
+    context 'mobile' do
+      before(:all) do
+        Capybara.current_driver = :iphone
+        query_string = "SRQuery=true"
+        @query_param_mobile_test = EdgeTest.new("#{url}?#{query_string}")
+        visit(url)
+        sleep(3)
+      end
+
+      it 'url does not change' do
+        expect(@query_param_mobile_test.request_parameters["url"]).to eq(url)
+      end
+    end
   end
 
   context 'desktop/mobile comparison' do
@@ -88,8 +103,18 @@ describe "Edge Request", :type => :feature do
       test_params = ["pid", "title", "url", "date", "tags", "channels"]
 
       test_params.each do |p|
+        if @comparison_mobile_test.request_parameters[p] == @comparison_desktop_test.request_parameters[p]
+          puts "#{p} same on desktop and mobile: #{@comparison_mobile_test.request_parameters[p]}"
+        else
+          puts puts "#{p} mismatch detected:"
+          puts "mobile: #{@comparison_mobile_test.request_parameters[p]}"
+          puts "desktop: #{@comparison_desktop_test.request_parameters[p]}"
+        end
+
         expect(@comparison_mobile_test.request_parameters[p]).to eq(@comparison_desktop_test.request_parameters[p])
       end
     end
   end
+
+
 end
