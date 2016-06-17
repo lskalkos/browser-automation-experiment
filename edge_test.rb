@@ -19,16 +19,12 @@ class EdgeTest
     setup_drivers
   end
 
-  # def record_requests
-  #   proxy.new_har("#{url}")
-  # end
-
   def self.stop
     proxy.close
   end
 
   def self.server
-    @@server ||= BrowserMob::Proxy::Server.new("./browsermob-proxy-2.1.1/bin/browsermob-proxy", log: true)
+    @@server ||= BrowserMob::Proxy::Server.new("./browsermob-proxy-2.1.1/bin/browsermob-proxy")
   end
 
   def self.setup_drivers
