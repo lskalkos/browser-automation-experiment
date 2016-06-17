@@ -1,12 +1,7 @@
 require "./edge_test"
 
-def desktop_check
-
-end
-
 describe "Edge Request", :type => :feature do
-  base_url = 'http://qz.com/706493/alibabas-jack-ma-the-problem-with-counterfeits-is-theyre-better-quality-than-authentic-luxury-goods/'
-  protocol 
+  url = 'http://time.com/partner/medc/detroit-art-of-the-comeback'
   before(:all) do
     EdgeTest.run
   end

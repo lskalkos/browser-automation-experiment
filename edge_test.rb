@@ -28,14 +28,15 @@ class EdgeTest
   end
 
   def self.server
-    @@server ||= BrowserMob::Proxy::Server.new("./browsermob-proxy-2.1.1/bin/browsermob-proxy")
+    @@server ||= BrowserMob::Proxy::Server.new("./browsermob-proxy-2.1.1/bin/browsermob-proxy", log: true)
   end
 
   def self.setup_drivers
     chromedriver_path = "./chromedriver"
     Selenium::WebDriver::Chrome.driver_path = chromedriver_path
-    selenium_proxy = Selenium::WebDriver::Proxy.new(:http => proxy.selenium_proxy.http)
-    caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => selenium_proxy)
+    @selenium_proxy ||= Selenium::WebDriver::Proxy.new(:http => proxy.selenium_proxy.http)
+    caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => @selenium_proxy)
+    mobile_caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => @selenium_proxy, "chromeOptions" => {"mobileEmulation" => { "deviceName" => "Apple iPhone 5" }})
 
     profile = Selenium::WebDriver::Firefox::Profile.new
     profile['general.useragent.override'] = "iPhone"
@@ -45,7 +46,8 @@ class EdgeTest
     end
 
     Capybara.register_driver :iphone do |app|
-      Capybara::Selenium::Driver.new(app, :profile => profile, :desired_capabilities => caps)
+      Capybara::Selenium::Driver.new(app, :browser => :chrome, :desired_capabilities => mobile_caps)
+      # Capybara::Selenium::Driver.new(app, :profile => profile, :desired_capabilities => caps)
     end
 
     Capybara.current_driver = :chrome
