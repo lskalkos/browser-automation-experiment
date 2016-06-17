@@ -81,10 +81,10 @@ class EdgeTest
   end
 
   def n_request
-    n_requests.first
+    @n_request ||= n_requests.first
   end
 
   def query_string
-    n_request.request.query_string
+    @query_string ||= n_request.request.query_string if n_request
   end
 end

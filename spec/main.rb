@@ -54,4 +54,34 @@ describe "Edge Request", :type => :feature do
       expect(@mobile_test.t_requests.empty?).to eq(false)
     end
   end
+
+  context 'desktop/mobile comparison' do
+    before(:all) do
+      Capybara.current_driver = :iphone
+      @comparison_mobile_test = EdgeTest.new(url)
+      visit(url)
+      sleep(5)
+
+      Capybara.current_driver = :chrome
+      @comparison_desktop_test = EdgeTest.new(url)
+      visit(url)
+      sleep(5)
+    end
+
+    it 'mobile and desktop parameters are the same' do
+      mobile_params = @comparison_mobile_test.query_string.map do |param, hash|
+        [param["name"], param["value"]]
+      end.to_h
+
+      desktop_params = @comparison_desktop_test.query_string.map do |param, hash|
+        [param["name"], param["value"]]
+      end.to_h
+
+      test_params = ["pid", "title", "url", "date", "tags", "channels"]
+
+      test_params.each do |p|
+        expect(mobile_params[p]).to eq(desktop_params[p])
+      end
+    end
+  end
 end
