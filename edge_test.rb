@@ -11,46 +11,53 @@ class EdgeTest
 
   def initialize(url)
     @url = url
-    chromedriver_path = "./chromedriver"
-    Selenium::WebDriver::Chrome.driver_path = chromedriver_path
+    EdgeTest.proxy.new_har("#{url}")
   end
 
-  def run
+  def self.run
     server.start
-    setup_driver
-    proxy.new_har("#{url}")
+    setup_drivers
   end
 
-  def stop
+  # def record_requests
+  #   proxy.new_har("#{url}")
+  # end
+
+  def self.stop
     proxy.close
   end
 
-  def server
-    @server ||= BrowserMob::Proxy::Server.new("./browsermob-proxy-2.1.1/bin/browsermob-proxy", log: true)
+  def self.server
+    @@server ||= BrowserMob::Proxy::Server.new("./browsermob-proxy-2.1.1/bin/browsermob-proxy")
   end
 
-  def setup_driver
+  def self.setup_drivers
+    chromedriver_path = "./chromedriver"
+    Selenium::WebDriver::Chrome.driver_path = chromedriver_path
     selenium_proxy = Selenium::WebDriver::Proxy.new(:http => proxy.selenium_proxy.http)
     caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => selenium_proxy)
 
+    profile = Selenium::WebDriver::Firefox::Profile.new
+    profile['general.useragent.override'] = "iPhone"
+
     Capybara.register_driver :chrome do |app|
       Capybara::Selenium::Driver.new(app, :browser => :chrome, :desired_capabilities => caps)
+    end
+
+    Capybara.register_driver :iphone do |app|
+      Capybara::Selenium::Driver.new(app, :profile => profile, :desired_capabilities => caps)
     end
 
     Capybara.current_driver = :chrome
   end
 
 
-  def proxy
-    @proxy ||= server.create_proxy
+  def self.proxy
+    @@proxy ||= server.create_proxy
   end
 
   def har
-    @har ||= proxy.har
-  end
-
-  def temp_file
-    "/tmp/test.har"
+    @har ||= EdgeTest.proxy.har
   end
 
   def har_entries
@@ -71,5 +78,13 @@ class EdgeTest
 
   def event_requests
     @event_requests ||= edge_requests.select{|e| e.request.url.include?('/event?')}
+  end
+
+  def n_request
+    n_requests.first
+  end
+
+  def query_string
+    n_request.request.query_string
   end
 end

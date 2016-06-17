@@ -1,27 +1,57 @@
 require "./edge_test"
 
+def desktop_check
+
+end
+
 describe "Edge Request", :type => :feature do
+  url = 'http://qz.com/706493/alibabas-jack-ma-the-problem-with-counterfeits-is-theyre-better-quality-than-authentic-luxury-goods/'
   before(:all) do
-    url = 'http://qz.com/706493/alibabas-jack-ma-the-problem-with-counterfeits-is-theyre-better-quality-than-authentic-luxury-goods/'
-    @edgetest = EdgeTest.new(url)
-    @edgetest.run
-    visit(url)
-    page.execute_script('window.scrollTo(0,100000)')
+    EdgeTest.run
   end
 
   after(:all) do
-    @edgetest.stop
+    EdgeTest.stop
   end
 
-  it 'n call is present and fires once' do
-    expect(@edgetest.n_requests.length).to eq(1)
+  context 'desktop' do
+    before(:all) do
+      @desktop_test = EdgeTest.new(url)
+      visit(url)
+      page.execute_script('window.scrollTo(0,100000)')
+      sleep(10)
+    end
+    it 'n call is present and fires once' do
+      expect(@desktop_test.n_requests.length).to eq(1)
+    end
+
+    it 'has a successful response' do
+      expect(@desktop_test.n_requests.first.response.status).to eq(200)
+    end
+
+    it 'time on site fires' do
+      expect(@desktop_test.t_requests.empty?).to eq(false)
+    end
   end
 
-  it 'has a successful response' do
-    expect(@edgetest.n_requests.first.response.status).to eq(200)
-  end
+  context 'mobile' do
+    before(:all) do
+      Capybara.current_driver = :iphone
+      @mobile_test = EdgeTest.new(url)
+      visit(url)
+      page.execute_script('window.scrollTo(0,100000)')
+      sleep(10)
+    end
+    it 'n call is present and fires once' do
+      expect(@mobile_test.n_requests.length).to eq(1)
+    end
 
-  it 'time on site fires' do
-    expect(@edgetest.t_requests.empty?).to eq(false)
+    it 'has a successful response' do
+      expect(@mobile_test.n_requests.first.response.status).to eq(200)
+    end
+
+    it 'time on site fires' do
+      expect(@mobile_test.t_requests.empty?).to eq(false)
+    end
   end
 end
