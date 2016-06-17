@@ -55,6 +55,22 @@ describe "Edge Request", :type => :feature do
     end
   end
 
+  context 'adding query parameters to the url' do
+    context 'desktop' do
+      before(:all) do
+        Capybara.current_driver = :chrome
+        query_string = "SRQuery=true"
+        @query_param_desktop_test = EdgeTest.new("#{url}?#{query_string}")
+        visit(url)
+        sleep(3)
+      end
+
+      it 'url does not change' do
+        expect(@query_param_desktop_test.request_parameters["url"]).to eq(url)
+      end
+    end
+  end
+
   context 'desktop/mobile comparison' do
     before(:all) do
       Capybara.current_driver = :iphone
@@ -69,18 +85,10 @@ describe "Edge Request", :type => :feature do
     end
 
     it 'mobile and desktop parameters are the same' do
-      mobile_params = @comparison_mobile_test.query_string.map do |param, hash|
-        [param["name"], param["value"]]
-      end.to_h
-
-      desktop_params = @comparison_desktop_test.query_string.map do |param, hash|
-        [param["name"], param["value"]]
-      end.to_h
-
       test_params = ["pid", "title", "url", "date", "tags", "channels"]
 
       test_params.each do |p|
-        expect(mobile_params[p]).to eq(desktop_params[p])
+        expect(@comparison_mobile_test.request_parameters[p]).to eq(@comparison_desktop_test.request_parameters[p])
       end
     end
   end

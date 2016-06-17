@@ -87,4 +87,8 @@ class EdgeTest
   def query_string
     @query_string ||= n_request.request.query_string if n_request
   end
+
+  def request_parameters
+    @request_parameters ||= query_string.map{|param, hash| [param["name"], param["value"]] }.to_h if query_string
+  end
 end
