@@ -6,7 +6,7 @@ require 'capybara/dsl'
 require 'capybara/rspec'
 
 class EdgeTest
-  include Capybara::DSL
+  COMPARISON_PARAMS = ["pid", "title", "url", "date", "tags", "channels"]
   attr_accessor :url
 
   def initialize(url)
@@ -34,19 +34,16 @@ class EdgeTest
     caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => @selenium_proxy)
     mobile_caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => @selenium_proxy, "chromeOptions" => {"mobileEmulation" => { "deviceName" => "Apple iPhone 5" }})
 
-    profile = Selenium::WebDriver::Firefox::Profile.new
-    profile['general.useragent.override'] = "iPhone"
 
-    Capybara.register_driver :chrome do |app|
+    Capybara.register_driver :desktop_chrome do |app|
       Capybara::Selenium::Driver.new(app, :browser => :chrome, :desired_capabilities => caps)
     end
 
-    Capybara.register_driver :iphone do |app|
+    Capybara.register_driver :mobile_chrome do |app|
       Capybara::Selenium::Driver.new(app, :browser => :chrome, :desired_capabilities => mobile_caps)
-      # Capybara::Selenium::Driver.new(app, :profile => profile, :desired_capabilities => caps)
     end
 
-    Capybara.current_driver = :chrome
+    Capybara.current_driver = :desktop_chrome
   end
 
 
@@ -63,7 +60,7 @@ class EdgeTest
   end
 
   def edge_requests
-    @edge_requests ||= har_entries.select{|e| e.request.url.include?('edge') }
+    @edge_requests ||= har_entries.select{|e| e.request.url.include?('edge.simplereach') }
   end
 
   def n_requests

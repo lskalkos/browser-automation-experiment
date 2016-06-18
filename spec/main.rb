@@ -32,7 +32,7 @@ describe "Edge Request", :type => :feature do
 
   context 'mobile' do
     before(:all) do
-      Capybara.current_driver = :iphone
+      Capybara.current_driver = :mobile_chrome
       @mobile_test = EdgeTest.new(url)
       visit(url)
       page.execute_script('window.scrollTo(0,100000)')
@@ -54,7 +54,7 @@ describe "Edge Request", :type => :feature do
   context 'adding query parameters to the url' do
     context 'desktop' do
       before(:all) do
-        Capybara.current_driver = :chrome
+        Capybara.current_driver = :desktop_chrome
         query_string = "SRQuery=true"
         @query_param_desktop_test = EdgeTest.new("#{url}?#{query_string}")
         visit(url)
@@ -68,7 +68,7 @@ describe "Edge Request", :type => :feature do
 
     context 'mobile' do
       before(:all) do
-        Capybara.current_driver = :iphone
+        Capybara.current_driver = :mobile_chrome
         query_string = "SRQuery=true"
         @query_param_mobile_test = EdgeTest.new("#{url}?#{query_string}")
         visit(url)
@@ -83,21 +83,19 @@ describe "Edge Request", :type => :feature do
 
   context 'desktop/mobile comparison' do
     before(:all) do
-      Capybara.current_driver = :iphone
+      Capybara.current_driver = :mobile_chrome
       @comparison_mobile_test = EdgeTest.new(url)
       visit(url)
       sleep(5)
 
-      Capybara.current_driver = :chrome
+      Capybara.current_driver = :desktop_chrome
       @comparison_desktop_test = EdgeTest.new(url)
       visit(url)
       sleep(5)
     end
 
     it 'mobile and desktop parameters are the same' do
-      test_params = ["pid", "title", "url", "date", "tags", "channels"]
-
-      test_params.each do |p|
+      EdgeTest::COMPARISON_PARAMS.each do |p|
         if @comparison_mobile_test.request_parameters[p] == @comparison_desktop_test.request_parameters[p]
           puts "#{p} same on desktop and mobile: #{@comparison_mobile_test.request_parameters[p]}"
         else
@@ -110,6 +108,4 @@ describe "Edge Request", :type => :feature do
       end
     end
   end
-
-
 end
