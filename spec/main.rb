@@ -32,7 +32,7 @@ describe "Edge Request", :type => :feature do
 
   context 'mobile' do
     before(:all) do
-      Capybara.current_driver = :mobile_chrome
+      Capybara.default_driver = :mobile_chrome
       @mobile_test = EdgeTest.new(url)
       visit(url)
       page.execute_script('window.scrollTo(0,100000)')
@@ -54,7 +54,7 @@ describe "Edge Request", :type => :feature do
   context 'adding query parameters to the url' do
     context 'desktop' do
       before(:all) do
-        Capybara.current_driver = :desktop_chrome
+        Capybara.default_driver = :desktop_chrome
         query_string = "SRQuery=true"
         @query_param_desktop_test = EdgeTest.new("#{url}?#{query_string}")
         visit(url)
@@ -68,7 +68,7 @@ describe "Edge Request", :type => :feature do
 
     context 'mobile' do
       before(:all) do
-        Capybara.current_driver = :mobile_chrome
+        Capybara.default_driver = :mobile_chrome
         query_string = "SRQuery=true"
         @query_param_mobile_test = EdgeTest.new("#{url}?#{query_string}")
         visit(url)
@@ -83,12 +83,12 @@ describe "Edge Request", :type => :feature do
 
   context 'desktop/mobile comparison' do
     before(:all) do
-      Capybara.current_driver = :mobile_chrome
+      Capybara.default_driver = :mobile_chrome
       @comparison_mobile_test = EdgeTest.new(url)
       visit(url)
       sleep(5)
 
-      Capybara.current_driver = :desktop_chrome
+      Capybara.default_driver = :desktop_chrome
       @comparison_desktop_test = EdgeTest.new(url)
       visit(url)
       sleep(5)
