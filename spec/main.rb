@@ -4,10 +4,12 @@ describe "Edge Request", :type => :feature do
   url = 'http://time.com/partner/medc/detroit-art-of-the-comeback'
   before(:all) do
     EdgeTest.run
+    puts "Beginning QA for #{url}"
   end
 
   after(:all) do
     EdgeTest.stop
+    puts "Finished QA for #{url}"
   end
 
   context 'desktop' do
@@ -84,6 +86,46 @@ describe "Edge Request", :type => :feature do
 
       it 'page_url captures query parameters' do
         expect(@query_param_mobile_test.request_parameters["page_url"]).to match(query_string)
+      end
+    end
+  end
+
+  context 'adding or removing / from the url' do
+    context 'desktop' do
+      before(:all) do
+        if url[-1] === '/'
+          new_url = url.chomp('/')
+        else 
+          new_url = "#{url}/"
+        end
+
+        @slash_desktop_test = EdgeTest.new(new_url, {driver: :desktop_chrome})
+        puts "Visiting #{new_url}"
+        visit(new_url)
+        sleep(3)
+      end
+
+      it 'url does not change' do
+        expect(@slash_desktop_test.request_parameters["url"]).to eq(url)
+      end
+    end
+
+    context 'mobile' do
+      before(:all) do
+        if url[-1] === '/'
+          new_url = url.chomp('/')
+        else 
+          new_url = "#{url}/"
+        end
+
+        @slash_mobile_test = EdgeTest.new(new_url, {driver: :mobile_chrome})
+        puts "Visiting #{new_url}"
+        visit(new_url)
+        sleep(3)
+      end
+
+      it 'url does not change' do
+        expect(@slash_mobile_test.request_parameters["url"]).to eq(url)
       end
     end
   end
