@@ -1,4 +1,5 @@
-require "./edge_test"
+require './edge_test'
+require 'date'
 
 describe "Edge Request", :type => :feature do
   url = 'http://time.com/partner/medc/detroit-art-of-the-comeback'
@@ -31,6 +32,10 @@ describe "Edge Request", :type => :feature do
     it 'time on site fires' do
       expect(@desktop_test.t_requests.empty?).to eq(false)
     end
+
+    it 'date is valid' do
+      expect{ Date.parse(@desktop_test.request_parameters["date"]) }.not_to raise_error
+    end
   end
 
   context 'mobile' do
@@ -51,6 +56,10 @@ describe "Edge Request", :type => :feature do
 
     it 'time on site fires' do
       expect(@mobile_test.t_requests.empty?).to eq(false)
+    end
+
+    it 'date is valid' do
+      expect{ Date.parse(@desktop_test.request_parameters["date"]) }.not_to raise_error
     end
   end
 
@@ -95,7 +104,7 @@ describe "Edge Request", :type => :feature do
       before(:all) do
         if url[-1] === '/'
           new_url = url.chomp('/')
-        else 
+        else
           new_url = "#{url}/"
         end
 
@@ -114,7 +123,7 @@ describe "Edge Request", :type => :feature do
       before(:all) do
         if url[-1] === '/'
           new_url = url.chomp('/')
-        else 
+        else
           new_url = "#{url}/"
         end
 
