@@ -79,7 +79,7 @@ describe "Standard Implementation", :type => :feature do
         @query_param_desktop_test = EdgeTest.new("#{url}?#{query_string}", {driver: :desktop_chrome})
         visit("#{url}?#{query_string}")
         sleep(3)
-        @query_param_desktop_test_og_url = page.find('meta[property="og:url"]', visible: false)["content"]
+        @query_param_desktop_test.og_url = page.find('meta[property="og:url"]', visible: false)["content"]
       end
 
       it 'url does not change' do
@@ -91,7 +91,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       it 'og:url does not change' do
-        expect(@query_param_desktop_test_og_url).to eq(url)
+        expect(@query_param_desktop_test.og_url).to eq(url)
       end
     end
 
