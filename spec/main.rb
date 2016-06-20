@@ -21,6 +21,10 @@ describe "Edge Request", :type => :feature do
       sleep(10)
     end
 
+    it 'page does not 404' do
+      expect(@desktop_test.site_request.response.status).to_not eq(404)
+    end
+
     it 'n call is present and fires once' do
       expect(@desktop_test.n_requests.length).to eq(1)
     end
@@ -44,6 +48,10 @@ describe "Edge Request", :type => :feature do
       visit(url)
       page.execute_script('window.scrollTo(0,100000)')
       sleep(10)
+    end
+
+    it 'page does not 404' do
+      expect(@mobile_test.site_request.response.status).to_not eq(404)
     end
 
     it 'n call is present and fires once' do
@@ -164,4 +172,51 @@ describe "Edge Request", :type => :feature do
       end
     end
   end
+
+  context 'HTTP vs. HTTPS' do
+    context 'HTTPS' do
+      before(:all) do
+        if url.include?('http://') 
+          stripped_url = url.slice(7, url.length)
+          https_url = "https://#{stripped_url}" 
+        elsif url.include?('https://')
+          https_url = url
+        else
+          https_url = "https://#{url}"
+        end
+
+        @https_desktop_test = EdgeTest.new(https_url, {driver: :desktop_chrome})
+        puts "Visiting #{https_url}"
+        visit(https_url)
+        sleep(5)
+      end
+
+      it 'url does not change if visited with HTTPS' do
+        expect(@https_desktop_test.request_parameters["url"]).to eq(url)
+      end
+    end
+
+    context 'HTTP' do
+      before(:all) do
+        if url.include?('http://') #case url has HTTP in front of it, #case url has HTTPS in front of it, #case URL has no protocol
+          http_url = url
+        elsif url.include?('https://')
+          stripped_url = url.slice(8, url.length)
+          http_url = "http://#{url}"
+        else
+          http_url = "http://#{url}"
+        end
+
+        @http_desktop_test = EdgeTest.new(http_url, {driver: :desktop_chrome})
+        puts "Visiting #{http_url}"
+        visit(http_url)
+        sleep(5)
+      end
+
+      it 'url does not change if visited with HTTP' do
+        expect(@http_desktop_test.request_parameters["url"]).to eq(url)
+      end
+    end
+  end
+
 end

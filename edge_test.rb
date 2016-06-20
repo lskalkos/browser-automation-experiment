@@ -32,10 +32,9 @@ class EdgeTest
   def self.setup_drivers
     chromedriver_path = "./chromedriver"
     Selenium::WebDriver::Chrome.driver_path = chromedriver_path
-    @selenium_proxy ||= Selenium::WebDriver::Proxy.new(:http => proxy.selenium_proxy.http)
-    caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => @selenium_proxy)
-    mobile_caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => @selenium_proxy, "chromeOptions" => {"mobileEmulation" => { "deviceName" => "Apple iPhone 5" }})
-
+    @selenium_webdriver_proxy ||= Selenium::WebDriver::Proxy.new(:http => selenium_proxy.http, :ssl => selenium_proxy.ssl)
+    caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => @selenium_webdriver_proxy)
+    mobile_caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => @selenium_webdriver_proxy, "chromeOptions" => {"mobileEmulation" => { "deviceName" => "Apple iPhone 5" }})
 
     Capybara.register_driver :desktop_chrome do |app|
       Capybara::Selenium::Driver.new(app, :browser => :chrome, :desired_capabilities => caps)
@@ -53,12 +52,20 @@ class EdgeTest
     @@proxy ||= server.create_proxy
   end
 
+  def self.selenium_proxy
+    @@seleium_proxy ||= proxy.selenium_proxy(:http, :ssl)
+  end
+
   def har
     @har ||= EdgeTest.proxy.har
   end
 
   def har_entries
     har.entries
+  end
+
+  def site_request
+    har_entries.first 
   end
 
   def edge_requests
