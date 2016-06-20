@@ -1,8 +1,8 @@
 require './edge_test'
 require 'date'
 
-describe "Edge Request", :type => :feature do
-  url = 'http://time.com/partner/medc/detroit-art-of-the-comeback'
+describe "Standard Implementation", :type => :feature do
+  url = 'http://www.thedrive.com/vintage/4010/the-8-most-beautiful-le-mans-cars-of-all-time'
   before(:all) do
     EdgeTest.run
     puts "Beginning QA for #{url}"
@@ -79,6 +79,7 @@ describe "Edge Request", :type => :feature do
         @query_param_desktop_test = EdgeTest.new("#{url}?#{query_string}", {driver: :desktop_chrome})
         visit("#{url}?#{query_string}")
         sleep(3)
+        @query_param_desktop_test_og_url = page.find('meta[property="og:url"]', visible: false)["content"]
       end
 
       it 'url does not change' do
@@ -87,6 +88,10 @@ describe "Edge Request", :type => :feature do
 
       it 'page_url captures query parameters' do
         expect(@query_param_desktop_test.request_parameters["page_url"]).to match(query_string)
+      end
+
+      it 'og:url does not change' do
+        expect(@query_param_desktop_test_og_url).to eq(url)
       end
     end
 
@@ -125,6 +130,7 @@ describe "Edge Request", :type => :feature do
       it 'url does not change' do
         expect(@slash_desktop_test.request_parameters["url"]).to eq(url)
       end
+
     end
 
     context 'mobile' do
@@ -192,7 +198,11 @@ describe "Edge Request", :type => :feature do
       end
 
       it 'url does not change if visited with HTTPS' do
-        expect(@https_desktop_test.request_parameters["url"]).to eq(url)
+        if @https_desktop_test.site_request.response.status == 200
+          expect(@https_desktop_test.request_parameters["url"]).to eq(url)
+        else 
+          puts "HTTPS not available"
+        end
       end
     end
 
