@@ -53,29 +53,37 @@ describe "Edge Request", :type => :feature do
   end
 
   context 'adding query parameters to the url' do
+    query_string = "SRQuery=true"
+
     context 'desktop' do
       before(:all) do
-        query_string = "SRQuery=true"
         @query_param_desktop_test = EdgeTest.new("#{url}?#{query_string}", {driver: :desktop_chrome})
-        visit(url)
+        visit("#{url}?#{query_string}")
         sleep(3)
       end
 
       it 'url does not change' do
         expect(@query_param_desktop_test.request_parameters["url"]).to eq(url)
       end
+
+      it 'page_url captures query parameters' do
+        expect(@query_param_desktop_test.request_parameters["page_url"]).to match(query_string)
+      end
     end
 
     context 'mobile' do
       before(:all) do
-        query_string = "SRQuery=true"
         @query_param_mobile_test = EdgeTest.new("#{url}?#{query_string}", {driver: :mobile_chrome})
-        visit(url)
+        visit("#{url}?#{query_string}")
         sleep(3)
       end
 
       it 'url does not change' do
         expect(@query_param_mobile_test.request_parameters["url"]).to eq(url)
+      end
+
+      it 'page_url captures query parameters' do
+        expect(@query_param_mobile_test.request_parameters["page_url"]).to match(query_string)
       end
     end
   end
