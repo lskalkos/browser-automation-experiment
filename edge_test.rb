@@ -6,11 +6,13 @@ require 'capybara/dsl'
 require 'capybara/rspec'
 
 class EdgeTest
-  COMPARISON_PARAMS = ["pid", "title", "url", "date", "tags", "channels"]
-  attr_accessor :url
+  COMPARISON_PARAMS = ["title", "url", "date", "pid", "tags", "channels", "authors"]
+  attr_accessor :url, :driver
 
-  def initialize(url)
+  def initialize(url, options = {})
     @url = url
+    @driver = options[:driver]
+    Capybara.default_driver = driver if driver
     EdgeTest.proxy.new_har("#{url}")
   end
 

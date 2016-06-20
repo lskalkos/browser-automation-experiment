@@ -17,6 +17,7 @@ describe "Edge Request", :type => :feature do
       page.execute_script('window.scrollTo(0,100000)')
       sleep(10)
     end
+
     it 'n call is present and fires once' do
       expect(@desktop_test.n_requests.length).to eq(1)
     end
@@ -32,12 +33,12 @@ describe "Edge Request", :type => :feature do
 
   context 'mobile' do
     before(:all) do
-      Capybara.default_driver = :mobile_chrome
-      @mobile_test = EdgeTest.new(url)
+      @mobile_test = EdgeTest.new(url, {driver: :mobile_chrome})
       visit(url)
       page.execute_script('window.scrollTo(0,100000)')
       sleep(10)
     end
+
     it 'n call is present and fires once' do
       expect(@mobile_test.n_requests.length).to eq(1)
     end
@@ -54,9 +55,8 @@ describe "Edge Request", :type => :feature do
   context 'adding query parameters to the url' do
     context 'desktop' do
       before(:all) do
-        Capybara.default_driver = :desktop_chrome
         query_string = "SRQuery=true"
-        @query_param_desktop_test = EdgeTest.new("#{url}?#{query_string}")
+        @query_param_desktop_test = EdgeTest.new("#{url}?#{query_string}", {driver: :desktop_chrome})
         visit(url)
         sleep(3)
       end
@@ -68,9 +68,8 @@ describe "Edge Request", :type => :feature do
 
     context 'mobile' do
       before(:all) do
-        Capybara.default_driver = :mobile_chrome
         query_string = "SRQuery=true"
-        @query_param_mobile_test = EdgeTest.new("#{url}?#{query_string}")
+        @query_param_mobile_test = EdgeTest.new("#{url}?#{query_string}", {driver: :mobile_chrome})
         visit(url)
         sleep(3)
       end
@@ -83,13 +82,11 @@ describe "Edge Request", :type => :feature do
 
   context 'desktop/mobile comparison' do
     before(:all) do
-      Capybara.default_driver = :mobile_chrome
-      @comparison_mobile_test = EdgeTest.new(url)
+      @comparison_mobile_test = EdgeTest.new(url, {driver: :mobile_chrome})
       visit(url)
       sleep(5)
 
-      Capybara.default_driver = :desktop_chrome
-      @comparison_desktop_test = EdgeTest.new(url)
+      @comparison_desktop_test = EdgeTest.new(url, {driver: :desktop_chrome})
       visit(url)
       sleep(5)
     end
