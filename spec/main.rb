@@ -59,7 +59,7 @@ describe "Edge Request", :type => :feature do
     end
 
     it 'date is valid' do
-      expect{ Date.parse(@desktop_test.request_parameters["date"]) }.not_to raise_error
+      expect{ Date.parse(@mobile_test.request_parameters["date"]) }.not_to raise_error
     end
   end
 
