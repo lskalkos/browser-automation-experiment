@@ -32,18 +32,16 @@ class EdgeTest
   def self.setup_drivers
     chromedriver_path = "./chromedriver"
     Selenium::WebDriver::Chrome.driver_path = chromedriver_path
-    caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => selenium_webdriver_proxy)
-    mobile_caps = Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => selenium_webdriver_proxy, "chromeOptions" => {"mobileEmulation" => { "deviceName" => "Apple iPhone 5" }})
 
     Capybara.register_driver :desktop_chrome do |app|
-      Capybara::Selenium::Driver.new(app, :browser => :chrome, :desired_capabilities => caps)
+      Capybara::Selenium::Driver.new(app, :browser => :chrome, :desired_capabilities => selenium_desktop_capabilities)
     end
 
     Capybara.register_driver :mobile_chrome do |app|
-      Capybara::Selenium::Driver.new(app, :browser => :chrome, :desired_capabilities => mobile_caps)
+      Capybara::Selenium::Driver.new(app, :browser => :chrome, :desired_capabilities => selenium_mobile_capabilities)
     end
 
-    Capybara.current_driver = :desktop_chrome
+    Capybara.default_driver = :desktop_chrome
   end
 
 
@@ -57,6 +55,15 @@ class EdgeTest
 
   def self.selenium_proxy
     @@seleium_proxy ||= proxy.selenium_proxy(:http, :ssl)
+  end
+
+  def self.selenium_desktop_capabilities
+    @@selenium_desktop_capabilities ||= Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => selenium_webdriver_proxy)
+  end
+
+  def self.selenium_mobile_capabilities
+    chrome_options = {"mobileEmulation" => { "deviceName" => "Apple iPhone 5" }}
+    @@selenium_mobile_capabilities ||= Selenium::WebDriver::Remote::Capabilities.chrome(:proxy => selenium_webdriver_proxy, "chromeOptions" => chrome_options)
   end
 
   def har
