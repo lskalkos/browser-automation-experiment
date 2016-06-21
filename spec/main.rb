@@ -2,7 +2,8 @@ require './edge_test'
 require 'date'
 
 describe "Standard Implementation", :type => :feature do
-  url = 'http://www.thedrive.com/vintage/4010/the-8-most-beautiful-le-mans-cars-of-all-time'
+  url = 'http://sponsored.people.com/visitcalifornia'
+  # url = 'http://www.thedrive.com/vintage/4010/the-8-most-beautiful-le-mans-cars-of-all-time'
   before(:all) do
     EdgeTest.run
     puts "Beginning QA for #{url}"
@@ -19,6 +20,10 @@ describe "Standard Implementation", :type => :feature do
       @desktop_test.session.visit(url)
       @desktop_test.session.execute_script('window.scrollTo(0,100000)')
       sleep(10)
+    end
+
+    after(:all) do
+      @desktop_test.session.driver.browser.close
     end
 
     it 'page does not 404' do
@@ -48,6 +53,10 @@ describe "Standard Implementation", :type => :feature do
       @mobile_test.session.visit(url)
       @mobile_test.session.execute_script('window.scrollTo(0,100000)')
       sleep(10)
+    end
+
+    after(:all) do
+      @mobile_test.session.driver.browser.close
     end
 
     it 'page does not 404' do
@@ -81,6 +90,10 @@ describe "Standard Implementation", :type => :feature do
         sleep(3)
       end
 
+      after(:all) do
+        @query_param_desktop_test.session.driver.browser.close
+      end
+
       it 'url does not change' do
         expect(@query_param_desktop_test.request_parameters["url"]).to eq(url)
       end
@@ -90,7 +103,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       it 'og:url either does not exist or does not change' do
-        begin 
+        begin
           expect(@query_param_desktop_test.session.find('meta[property="og:url"]', visible: false)["content"]).to eq(url)
         rescue Capybara::ElementNotFound
           puts "og:url not found on the page"
@@ -105,6 +118,10 @@ describe "Standard Implementation", :type => :feature do
         sleep(3)
       end
 
+      after(:all) do
+        @query_param_mobile_test.session.driver.browser.close
+      end
+
       it 'url does not change' do
         expect(@query_param_mobile_test.request_parameters["url"]).to eq(url)
       end
@@ -114,7 +131,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       it 'og:url either does not exist or does not change' do
-        begin 
+        begin
           expect(@query_param_mobile_test.session.find('meta[property="og:url"]', visible: false)["content"]).to eq(url)
         rescue Capybara::ElementNotFound
           puts "og:url not found on the page"
@@ -139,6 +156,10 @@ describe "Standard Implementation", :type => :feature do
         sleep(3)
       end
 
+      after(:all) do
+        @slash_desktop_test.session.driver.browser.close
+      end
+
       it 'url does not change' do
         expect(@slash_desktop_test.request_parameters["url"]).to eq(url)
       end
@@ -159,6 +180,10 @@ describe "Standard Implementation", :type => :feature do
         sleep(3)
       end
 
+      after(:all) do
+        @slash_mobile_test.session.driver.browser.close
+      end
+
       it 'url does not change' do
         expect(@slash_mobile_test.request_parameters["url"]).to eq(url)
       end
@@ -174,6 +199,11 @@ describe "Standard Implementation", :type => :feature do
       @comparison_desktop_test = EdgeTest.new(url, {driver: :desktop_chrome})
       @comparison_desktop_test.session.visit(url)
       sleep(5)
+    end
+
+    after(:all) do
+      @comparison_desktop_test.session.driver.browser.close
+      @comparison_mobile_test.session.driver.browser.close
     end
 
     it 'mobile and desktop parameters are the same' do
@@ -194,9 +224,9 @@ describe "Standard Implementation", :type => :feature do
   context 'HTTP vs. HTTPS' do
     context 'HTTPS' do
       before(:all) do
-        if url.include?('http://') 
+        if url.include?('http://')
           stripped_url = url.slice(7, url.length)
-          https_url = "https://#{stripped_url}" 
+          https_url = "https://#{stripped_url}"
         elsif url.include?('https://')
           https_url = url
         else
@@ -209,10 +239,14 @@ describe "Standard Implementation", :type => :feature do
         sleep(5)
       end
 
+      after(:all) do
+        @https_desktop_test.session.driver.browser.close
+      end
+
       it 'url does not change if visited with HTTPS' do
         if @https_desktop_test.site_request.response.status == 200
           expect(@https_desktop_test.request_parameters["url"]).to eq(url)
-        else 
+        else
           puts "HTTPS not available"
         end
       end
@@ -220,7 +254,7 @@ describe "Standard Implementation", :type => :feature do
 
     context 'HTTP' do
       before(:all) do
-        if url.include?('http://') 
+        if url.include?('http://')
           http_url = url
         elsif url.include?('https://')
           stripped_url = url.slice(8, url.length)
@@ -233,6 +267,10 @@ describe "Standard Implementation", :type => :feature do
         puts "Visiting #{http_url}"
         @http_desktop_test.session.visit(http_url)
         sleep(5)
+      end
+
+      after(:all) do
+        @http_desktop_test.session.driver.browser.close
       end
 
       it 'url does not change if visited with HTTP' do
