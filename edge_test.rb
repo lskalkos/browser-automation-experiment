@@ -7,13 +7,14 @@ require 'capybara/rspec'
 
 class EdgeTest
   COMPARISON_PARAMS = ["title", "url", "date", "pid", "tags", "channels", "authors"]
-  attr_accessor :url, :driver, :og_url
+  attr_accessor :url, :driver, :session 
 
   def initialize(url, options = {})
     @url = url
-    @driver = options[:driver]
-    Capybara.default_driver = driver if driver
+    @driver = options[:driver] || :desktop_chrome
+    Capybara.default_driver = driver
     EdgeTest.proxy.new_har("#{url}")
+    @session = Capybara::Session.new(driver)
   end
 
   def self.run

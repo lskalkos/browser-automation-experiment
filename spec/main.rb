@@ -16,8 +16,8 @@ describe "Standard Implementation", :type => :feature do
   context 'desktop' do
     before(:all) do
       @desktop_test = EdgeTest.new(url)
-      visit(url)
-      page.execute_script('window.scrollTo(0,100000)')
+      @desktop_test.session.visit(url)
+      @desktop_test.session.execute_script('window.scrollTo(0,100000)')
       sleep(10)
     end
 
@@ -45,8 +45,8 @@ describe "Standard Implementation", :type => :feature do
   context 'mobile' do
     before(:all) do
       @mobile_test = EdgeTest.new(url, {driver: :mobile_chrome})
-      visit(url)
-      page.execute_script('window.scrollTo(0,100000)')
+      @mobile_test.session.visit(url)
+      @mobile_test.session.execute_script('window.scrollTo(0,100000)')
       sleep(10)
     end
 
@@ -77,9 +77,8 @@ describe "Standard Implementation", :type => :feature do
     context 'desktop' do
       before(:all) do
         @query_param_desktop_test = EdgeTest.new("#{url}?#{query_string}", {driver: :desktop_chrome})
-        visit("#{url}?#{query_string}")
+        @query_param_desktop_test.session.visit("#{url}?#{query_string}")
         sleep(3)
-        @query_param_desktop_test.og_url = page.find('meta[property="og:url"]', visible: false)["content"]
       end
 
       it 'url does not change' do
@@ -91,14 +90,14 @@ describe "Standard Implementation", :type => :feature do
       end
 
       it 'og:url does not change' do
-        expect(@query_param_desktop_test.og_url).to eq(url)
+        expect(@query_param_desktop_test.session.find('meta[property="og:url"]', visible: false)["content"]).to eq(url)
       end
     end
 
     context 'mobile' do
       before(:all) do
         @query_param_mobile_test = EdgeTest.new("#{url}?#{query_string}", {driver: :mobile_chrome})
-        visit("#{url}?#{query_string}")
+        @query_param_mobile_test.session.visit("#{url}?#{query_string}")
         sleep(3)
       end
 
@@ -123,7 +122,7 @@ describe "Standard Implementation", :type => :feature do
 
         @slash_desktop_test = EdgeTest.new(new_url, {driver: :desktop_chrome})
         puts "Visiting #{new_url}"
-        visit(new_url)
+        @slash_desktop_test.session.visit(new_url)
         sleep(3)
       end
 
@@ -143,7 +142,7 @@ describe "Standard Implementation", :type => :feature do
 
         @slash_mobile_test = EdgeTest.new(new_url, {driver: :mobile_chrome})
         puts "Visiting #{new_url}"
-        visit(new_url)
+        @slash_mobile_test.session.visit(new_url)
         sleep(3)
       end
 
@@ -156,11 +155,11 @@ describe "Standard Implementation", :type => :feature do
   context 'desktop/mobile comparison' do
     before(:all) do
       @comparison_mobile_test = EdgeTest.new(url, {driver: :mobile_chrome})
-      visit(url)
+      @comparison_mobile_test.session.visit(url)
       sleep(5)
 
       @comparison_desktop_test = EdgeTest.new(url, {driver: :desktop_chrome})
-      visit(url)
+      @comparison_desktop_test.session.visit(url)
       sleep(5)
     end
 
@@ -193,7 +192,7 @@ describe "Standard Implementation", :type => :feature do
 
         @https_desktop_test = EdgeTest.new(https_url, {driver: :desktop_chrome})
         puts "Visiting #{https_url}"
-        visit(https_url)
+        @https_desktop_test.session.visit(https_url)
         sleep(5)
       end
 
@@ -208,7 +207,7 @@ describe "Standard Implementation", :type => :feature do
 
     context 'HTTP' do
       before(:all) do
-        if url.include?('http://') #case url has HTTP in front of it, #case url has HTTPS in front of it, #case URL has no protocol
+        if url.include?('http://') 
           http_url = url
         elsif url.include?('https://')
           stripped_url = url.slice(8, url.length)
@@ -219,7 +218,7 @@ describe "Standard Implementation", :type => :feature do
 
         @http_desktop_test = EdgeTest.new(http_url, {driver: :desktop_chrome})
         puts "Visiting #{http_url}"
-        visit(http_url)
+        @http_desktop_test.session.visit(http_url)
         sleep(5)
       end
 
