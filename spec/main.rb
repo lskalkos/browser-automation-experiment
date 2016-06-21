@@ -89,8 +89,12 @@ describe "Standard Implementation", :type => :feature do
         expect(@query_param_desktop_test.request_parameters["page_url"]).to match(query_string)
       end
 
-      it 'og:url does not change' do
-        expect(@query_param_desktop_test.session.find('meta[property="og:url"]', visible: false)["content"]).to eq(url)
+      it 'og:url either does not exist or does not change' do
+        begin 
+          expect(@query_param_desktop_test.session.find('meta[property="og:url"]', visible: false)["content"]).to eq(url)
+        rescue Capybara::ElementNotFound
+          puts "og:url not found on the page"
+        end
       end
     end
 
@@ -108,6 +112,15 @@ describe "Standard Implementation", :type => :feature do
       it 'page_url captures query parameters' do
         expect(@query_param_mobile_test.request_parameters["page_url"]).to match(query_string)
       end
+
+      it 'og:url either does not exist or does not change' do
+        begin 
+          expect(@query_param_mobile_test.session.find('meta[property="og:url"]', visible: false)["content"]).to eq(url)
+        rescue Capybara::ElementNotFound
+          puts "og:url not found on the page"
+        end
+      end
+
     end
   end
 
