@@ -2,8 +2,8 @@ require './edge_test'
 require 'date'
 
 describe "Standard Implementation", :type => :feature do
-  url = 'http://sponsored.people.com/visitcalifornia'
-  # url = 'http://www.thedrive.com/vintage/4010/the-8-most-beautiful-le-mans-cars-of-all-time'
+  url = ENV["URL_UNDER_TEST"]
+
   before(:all) do
     EdgeTest.run
     puts "Beginning QA for #{url}"
