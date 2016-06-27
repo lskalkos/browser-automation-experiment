@@ -1,5 +1,6 @@
 require './edge_test'
 require 'date'
+require 'colorize'
 
 describe "Standard Implementation", :type => :feature do
   url = ENV["URL_UNDER_TEST"]
@@ -209,7 +210,7 @@ describe "Standard Implementation", :type => :feature do
     it 'mobile and desktop parameters are the same' do
       EdgeTest::COMPARISON_PARAMS.each do |p|
         if @comparison_mobile_test.request_parameters[p] == @comparison_desktop_test.request_parameters[p]
-          puts "#{p} same on desktop and mobile: #{@comparison_mobile_test.request_parameters[p]}"
+          puts "#{p} same on desktop and mobile: #{@comparison_mobile_test.request_parameters[p]}".colorize(:light_blue)
         else
           puts puts "#{p} mismatch detected:"
           puts "mobile: #{@comparison_mobile_test.request_parameters[p]}"
