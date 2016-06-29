@@ -51,11 +51,11 @@ class EdgeTest
   end
 
   def self.selenium_webdriver_proxy
-    @selenium_webdriver_proxy ||= Selenium::WebDriver::Proxy.new(:http => selenium_proxy.http, :ssl => selenium_proxy.ssl)
+    @@selenium_webdriver_proxy ||= Selenium::WebDriver::Proxy.new(:http => selenium_proxy.http, :ssl => selenium_proxy.ssl)
   end
 
   def self.selenium_proxy
-    @@seleium_proxy ||= proxy.selenium_proxy(:http, :ssl)
+    @@selenium_proxy ||= proxy.selenium_proxy(:http, :ssl)
   end
 
   def self.selenium_desktop_capabilities
