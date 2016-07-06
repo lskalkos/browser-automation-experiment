@@ -13,7 +13,7 @@ class EdgeTest
     @url = url
     @driver = options[:driver] || :desktop_chrome
     Capybara.default_driver = driver
-    EdgeTest.proxy.new_har("#{url}")
+    EdgeTest.proxy.new_har("#{url}", capture_content: true)
     @session = Capybara::Session.new(driver)
   end
 
