@@ -178,7 +178,6 @@ describe "Standard Implementation", :type => :feature do
       it 'url does not change' do
         expect(@slash_desktop_test.request_parameters["url"]).to eq(url)
       end
-
     end
 
     context 'mobile' do
@@ -273,7 +272,7 @@ describe "Standard Implementation", :type => :feature do
           http_url = url
         elsif url.include?('https://')
           stripped_url = url.slice(8, url.length)
-          http_url = "http://#{url}"
+          http_url = "http://#{stripped_url}"
         else
           http_url = "http://#{url}"
         end
