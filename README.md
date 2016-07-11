@@ -23,7 +23,6 @@ Specs are then written as pretty run of the mill Rspec tests.
 
 ### Links
 * browsermob-proxy-rb gem repo: https://github.com/jarib/browsermob-proxy-rb
-Browser
 * BrowserMob proxy repo/docs: https://github.com/lightbody/browsermob-proxy
 
 ----
