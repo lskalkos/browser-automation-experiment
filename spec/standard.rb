@@ -2,7 +2,7 @@ describe "Standard Implementation", :type => :feature do
   url = ENV["URL_UNDER_TEST"]
 
   before(:all) do
-    EdgeTest.run
+    EdgeTest.run(url)
     puts "Beginning QA for #{url}"
   end
 
@@ -28,6 +28,7 @@ describe "Standard Implementation", :type => :feature do
     end
 
     it 'n call is present and fires once' do
+      byebug
       expect(@desktop_test.n_requests.length).to eq(1)
     end
 
