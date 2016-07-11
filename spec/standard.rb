@@ -28,7 +28,6 @@ describe "Standard Implementation", :type => :feature do
     end
 
     it 'n call is present and fires once' do
-      byebug
       expect(@desktop_test.n_requests.length).to eq(1)
     end
 

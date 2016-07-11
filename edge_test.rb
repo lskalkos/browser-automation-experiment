@@ -7,9 +7,10 @@ require 'capybara/rspec'
 require 'uri'
 
 class EdgeTest
-  COMPARISON_PARAMS = ["title", "url", "date", "pid", "tags", "channels", "authors"]
   attr_accessor :url, :driver, :session
-  EDGE_REGEX = /http:\/\/edge.simplereach.com.*/
+  COMPARISON_PARAMS = ["title", "url", "date", "pid", "tags", "channels", "authors"]
+  EDGE_REGEX = Regexp.new("((http|https):\/\/)?edge.simplereach.com.*")
+  ALL_JS_FILES_REGEX = Regexp.new(".*.js")
 
 
   def initialize(url, options = {})
@@ -21,11 +22,15 @@ class EdgeTest
   end
 
   def self.run(url)
+    server.start
+    whitelist(url)
+    setup_drivers
+  end
+
+  def self.whitelist(url)
     host = URI.parse(url).host
     url_to_whitelist = Regexp.new("((http|https):\/\/)?#{host}.*")
-    proxy.whitelist([EDGE_REGEX, url_to_whitelist], 404)
-    server.start
-    setup_drivers
+    proxy.whitelist([EDGE_REGEX, url_to_whitelist, ALL_JS_FILES_REGEX], 404)
   end
 
   def self.stop
