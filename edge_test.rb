@@ -13,7 +13,7 @@ class EdgeTest
     @url = url
     @driver = options[:driver] || :desktop_chrome
     Capybara.default_driver = driver
-    EdgeTest.proxy.new_har("#{url}")
+    EdgeTest.proxy.new_har("#{url}", capture_content: true)
     @session = Capybara::Session.new(driver)
   end
 
@@ -81,6 +81,10 @@ class EdgeTest
 
   def edge_requests
     @edge_requests ||= har_entries.select{|e| e.request.url.include?('edge.simplereach') }
+  end
+
+  def x_requests
+    @x_requests ||= edge_requests.select{|e| e.request.url.include?('/x?')}
   end
 
   def n_requests

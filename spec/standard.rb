@@ -46,6 +46,13 @@ describe "Standard Implementation", :type => :feature do
     it 'date is valid' do
       expect{ Date.parse(@desktop_test.request_parameters["date"]) }.not_to raise_error
     end
+
+    it 'n response does not error' do
+      if (@desktop_test.n_requests.first.response.content.text.include?("error"))
+        puts "Error response: #{@desktop_test.n_requests.first.response.content.text}"
+      end
+      expect(@desktop_test.n_requests.first.response.content.text).to_not match("error")
+    end
   end
 
   context 'mobile' do
@@ -78,6 +85,13 @@ describe "Standard Implementation", :type => :feature do
 
     it 'date is valid' do
       expect{ Date.parse(@mobile_test.request_parameters["date"]) }.not_to raise_error
+    end
+
+    it 'n response does not error' do
+      if (@mobile_test.n_requests.first.response.content.text.include?("error"))
+        puts "Error response: #{@mobile_test.n_requests.first.response.content.text}"
+      end
+      expect(@mobile_test.n_requests.first.response.content.text).to_not match("error")
     end
   end
 
@@ -164,7 +178,6 @@ describe "Standard Implementation", :type => :feature do
       it 'url does not change' do
         expect(@slash_desktop_test.request_parameters["url"]).to eq(url)
       end
-
     end
 
     context 'mobile' do
@@ -259,7 +272,7 @@ describe "Standard Implementation", :type => :feature do
           http_url = url
         elsif url.include?('https://')
           stripped_url = url.slice(8, url.length)
-          http_url = "http://#{url}"
+          http_url = "http://#{stripped_url}"
         else
           http_url = "http://#{url}"
         end
