@@ -16,7 +16,7 @@ describe "Standard Implementation", :type => :feature do
       @desktop_test = EdgeTest.new(url)
       @desktop_test.session.visit(url)
       @desktop_test.session.execute_script('window.scrollTo(0,100000)')
-      sleep(10)
+      wait.until{ @desktop_test.n_request_fired? }
     end
 
     after(:all) do
@@ -56,7 +56,7 @@ describe "Standard Implementation", :type => :feature do
       @mobile_test = EdgeTest.new(url, {driver: :mobile_chrome})
       @mobile_test.session.visit(url)
       @mobile_test.session.execute_script('window.scrollTo(0,100000)')
-      sleep(10)
+      wait.until{ @mobile_test.n_request_fired? }
     end
 
     after(:all) do
@@ -98,7 +98,7 @@ describe "Standard Implementation", :type => :feature do
       before(:all) do
         @query_param_desktop_test = EdgeTest.new("#{url}?#{query_string}", {driver: :desktop_chrome})
         @query_param_desktop_test.session.visit("#{url}?#{query_string}")
-        sleep(3)
+        wait.until{ @query_param_desktop_test.n_request_fired? }
       end
 
       after(:all) do
@@ -126,7 +126,7 @@ describe "Standard Implementation", :type => :feature do
       before(:all) do
         @query_param_mobile_test = EdgeTest.new("#{url}?#{query_string}", {driver: :mobile_chrome})
         @query_param_mobile_test.session.visit("#{url}?#{query_string}")
-        sleep(3)
+        wait.until{ @query_param_mobile_test.n_request_fired? }
       end
 
       after(:all) do
@@ -164,7 +164,7 @@ describe "Standard Implementation", :type => :feature do
         @slash_desktop_test = EdgeTest.new(new_url, {driver: :desktop_chrome})
         puts "Visiting #{new_url}"
         @slash_desktop_test.session.visit(new_url)
-        sleep(3)
+        wait.until{ @slash_desktop_test.n_request_fired? }
       end
 
       after(:all) do
@@ -187,7 +187,7 @@ describe "Standard Implementation", :type => :feature do
         @slash_mobile_test = EdgeTest.new(new_url, {driver: :mobile_chrome})
         puts "Visiting #{new_url}"
         @slash_mobile_test.session.visit(new_url)
-        sleep(3)
+        wait.until{ @slash_mobile_test.n_request_fired? }
       end
 
       after(:all) do
@@ -204,11 +204,11 @@ describe "Standard Implementation", :type => :feature do
     before(:all) do
       @comparison_mobile_test = EdgeTest.new(url, {driver: :mobile_chrome})
       @comparison_mobile_test.session.visit(url)
-      sleep(5)
+      wait.until{ @comparison_mobile_test.n_request_fired? }
 
       @comparison_desktop_test = EdgeTest.new(url, {driver: :desktop_chrome})
       @comparison_desktop_test.session.visit(url)
-      sleep(5)
+      wait.until{ @comparison_desktop_test.n_request_fired? }
     end
 
     after(:all) do
@@ -246,7 +246,7 @@ describe "Standard Implementation", :type => :feature do
         @https_desktop_test = EdgeTest.new(https_url, {driver: :desktop_chrome})
         puts "Visiting #{https_url}"
         @https_desktop_test.session.visit(https_url)
-        sleep(5)
+        wait.until{ @https_desktop_test.n_request_fired? }
       end
 
       after(:all) do
@@ -276,7 +276,7 @@ describe "Standard Implementation", :type => :feature do
         @http_desktop_test = EdgeTest.new(http_url, {driver: :desktop_chrome})
         puts "Visiting #{http_url}"
         @http_desktop_test.session.visit(http_url)
-        sleep(5)
+        wait.until{ @http_desktop_test.n_request_fired? }
       end
 
       after(:all) do

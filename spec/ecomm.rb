@@ -15,7 +15,7 @@ describe "Ecommerce Implementation", :type => :feature do
     before(:all) do
       @pixel_test = EdgeTest.new(url)
       @pixel_test.session.visit(url)
-      sleep(10)
+      wait.until{ @pixel_test.x_request_fired? }
     end
 
     after(:all) do

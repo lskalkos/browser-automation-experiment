@@ -7,7 +7,7 @@ require 'capybara/rspec'
 
 class EdgeTest
   COMPARISON_PARAMS = ["title", "url", "date", "pid", "tags", "channels", "authors"]
-  attr_accessor :url, :driver, :session 
+  attr_accessor :url, :driver, :session
 
   def initialize(url, options = {})
     @url = url
@@ -76,7 +76,7 @@ class EdgeTest
   end
 
   def site_request
-    har_entries.first 
+    har_entries.first
   end
 
   def edge_requests
@@ -109,5 +109,13 @@ class EdgeTest
 
   def request_parameters
     @request_parameters ||= query_string.map{|param, hash| [param["name"], param["value"]] }.to_h if query_string
+  end
+
+  def n_request_fired?
+    har.entries.select{|e| e.request.url.include?('edge.simplereach.com/n?')}.length >= 1
+  end
+
+  def x_request_fired?
+    har.entries.select{|e| e.request.url.include?('edge.simplereach.com/x?')}.length >= 1
   end
 end
