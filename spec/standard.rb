@@ -1,7 +1,3 @@
-require './edge_test'
-require 'date'
-require 'colorize'
-
 describe "Standard Implementation", :type => :feature do
   url = ENV["URL_UNDER_TEST"]
 
