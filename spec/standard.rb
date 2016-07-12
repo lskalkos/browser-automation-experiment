@@ -2,7 +2,7 @@ describe "Standard Implementation", :type => :feature do
   url = ENV["URL_UNDER_TEST"]
 
   before(:all) do
-    EdgeTest.run
+    EdgeTest.run(url)
     puts "Beginning QA for #{url}"
   end
 
