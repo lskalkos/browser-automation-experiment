@@ -11,83 +11,104 @@ describe "Standard Implementation", :type => :feature do
     puts "Finished QA for #{url}"
   end
 
-  context 'desktop' do
+  
+  describe 'standard tests' do
     before(:all) do
       @desktop_test = EdgeTest.new(url)
-      @desktop_test.session.visit(url)
-      @desktop_test.session.execute_script('window.scrollTo(0,100000)')
-      wait.until{ @desktop_test.n_request_fired? }
-    end
-
-    after(:all) do
-      @desktop_test.session.driver.browser.close
-    end
-
-    it 'page does not 404' do
-      expect(@desktop_test.site_request.response.status).to_not eq(404)
-    end
-
-    it 'n call is present and fires once' do
-      expect(@desktop_test.n_requests.length).to eq(1)
-    end
-
-    it 'has a successful response' do
-      expect(@desktop_test.n_requests.first.response.status).to eq(200)
-    end
-
-    it 'time on site fires' do
-      expect(@desktop_test.t_requests.empty?).to eq(false)
-    end
-
-    it 'date is valid' do
-      expect{ Date.parse(@desktop_test.request_parameters["date"]) }.not_to raise_error
-    end
-
-    it 'n response does not error' do
-      if (@desktop_test.n_requests.first.response.content.text.include?("error"))
-        puts "Error response: #{@desktop_test.n_requests.first.response.content.text}"
-      end
-      expect(@desktop_test.n_requests.first.response.content.text).to_not match("error")
-    end
-  end
-
-  context 'mobile' do
-    before(:all) do
       @mobile_test = EdgeTest.new(url, {driver: :mobile_chrome})
-      @mobile_test.session.visit(url)
-      @mobile_test.session.execute_script('window.scrollTo(0,100000)')
-      wait.until{ @mobile_test.n_request_fired? }
     end
-
-    after(:all) do
-      @mobile_test.session.driver.browser.close
-    end
-
-    it 'page does not 404' do
-      expect(@mobile_test.site_request.response.status).to_not eq(404)
-    end
-
-    it 'n call is present and fires once' do
-      expect(@mobile_test.n_requests.length).to eq(1)
-    end
-
-    it 'has a successful response' do
-      expect(@mobile_test.n_requests.first.response.status).to eq(200)
-    end
-
-    it 'time on site fires' do
-      expect(@mobile_test.t_requests.empty?).to eq(false)
-    end
-
-    it 'date is valid' do
-      expect{ Date.parse(@mobile_test.request_parameters["date"]) }.not_to raise_error
-    end
-
-    it 'n response does not error' do
-      if (@mobile_test.n_requests.first.response.content.text.include?("error"))
-        puts "Error response: #{@mobile_test.n_requests.first.response.content.text}"
+    context 'desktop' do
+      before(:all) do
+        @desktop_test.session.visit(url)
+        @desktop_test.session.execute_script('window.scrollTo(0,100000)')
+        sleep(10)
       end
-      expect(@mobile_test.n_requests.first.response.content.text).to_not match("error")
+
+      after(:all) do
+        @desktop_test.session.driver.browser.close
+      end
+
+      it 'page does not 404' do
+        expect(@desktop_test.site_request.response.status).to_not eq(404)
+      end
+
+      it 'n call is present and fires once' do
+        expect(@desktop_test.n_requests.length).to eq(1)
+      end
+
+      it 'has a successful response' do
+        expect(@desktop_test.n_requests.first.response.status).to eq(200)
+      end
+
+      it 'time on site fires' do
+        expect(@desktop_test.t_requests.empty?).to eq(false)
+      end
+
+      it 'date is valid' do
+        expect{ Date.parse(@desktop_test.request_parameters["date"]) }.not_to raise_error
+      end
+
+      it 'n response does not error' do
+        if (@desktop_test.n_requests.first.response.content.text.include?("error"))
+          puts "Error response: #{@desktop_test.n_requests.first.response.content.text}"
+        end
+        expect(@desktop_test.n_requests.first.response.content.text).to_not match("error")
+      end
+    end
+
+    context 'mobile' do
+      before(:all) do
+        @mobile_test.session.visit(url)
+        @mobile_test.session.execute_script('window.scrollTo(0,100000)')
+        sleep(10)
+      end
+
+      after(:all) do
+        @mobile_test.session.driver.browser.close
+      end
+
+      it 'page does not 404' do
+        expect(@mobile_test.site_request.response.status).to_not eq(404)
+      end
+
+      it 'n call is present and fires once' do
+        expect(@mobile_test.n_requests.length).to eq(1)
+      end
+
+      it 'has a successful response' do
+        expect(@mobile_test.n_requests.first.response.status).to eq(200)
+      end
+
+      it 'time on site fires' do
+        expect(@mobile_test.t_requests.empty?).to eq(false)
+      end
+
+      it 'date is valid' do
+        expect{ Date.parse(@mobile_test.request_parameters["date"]) }.not_to raise_error
+      end
+
+      it 'n response does not error' do
+        if (@mobile_test.n_requests.first.response.content.text.include?("error"))
+          puts "Error response: #{@mobile_test.n_requests.first.response.content.text}"
+        end
+        expect(@mobile_test.n_requests.first.response.content.text).to_not match("error")
+      end
+
+      describe 'mobile/desktop comparison' do
+        it 'mobile and desktop parameters are the same' do
+          EdgeTest::COMPARISON_PARAMS.each do |p|
+            if @mobile_test.request_parameters[p] == @desktop_test.request_parameters[p]
+              puts "#{p} same on desktop and mobile: #{@mobile_test.request_parameters[p]}".colorize(:light_blue)
+            else
+              puts puts "#{p} mismatch detected:"
+              puts "mobile: #{@mobile_test.request_parameters[p]}"
+              puts "desktop: #{@desktop_test.request_parameters[p]}"
+            end
+
+            expect(@mobile_test.request_parameters[p]).to eq(@desktop_test.request_parameters[p])
+          end
+        end
+      end
     end
   end
 
@@ -196,37 +217,6 @@ describe "Standard Implementation", :type => :feature do
 
       it 'url does not change' do
         expect(@slash_mobile_test.request_parameters["url"]).to eq(url)
-      end
-    end
-  end
-
-  context 'desktop/mobile comparison' do
-    before(:all) do
-      @comparison_mobile_test = EdgeTest.new(url, {driver: :mobile_chrome})
-      @comparison_mobile_test.session.visit(url)
-      wait.until{ @comparison_mobile_test.n_request_fired? }
-
-      @comparison_desktop_test = EdgeTest.new(url, {driver: :desktop_chrome})
-      @comparison_desktop_test.session.visit(url)
-      wait.until{ @comparison_desktop_test.n_request_fired? }
-    end
-
-    after(:all) do
-      @comparison_desktop_test.session.driver.browser.close
-      @comparison_mobile_test.session.driver.browser.close
-    end
-
-    it 'mobile and desktop parameters are the same' do
-      EdgeTest::COMPARISON_PARAMS.each do |p|
-        if @comparison_mobile_test.request_parameters[p] == @comparison_desktop_test.request_parameters[p]
-          puts "#{p} same on desktop and mobile: #{@comparison_mobile_test.request_parameters[p]}".colorize(:light_blue)
-        else
-          puts puts "#{p} mismatch detected:"
-          puts "mobile: #{@comparison_mobile_test.request_parameters[p]}"
-          puts "desktop: #{@comparison_desktop_test.request_parameters[p]}"
-        end
-
-        expect(@comparison_mobile_test.request_parameters[p]).to eq(@comparison_desktop_test.request_parameters[p])
       end
     end
   end
