@@ -10,8 +10,7 @@ class EdgeTest
   attr_accessor :url, :driver, :session
   COMPARISON_PARAMS = ["title", "url", "date", "pid", "tags", "channels", "authors"]
   EDGE_REGEX = Regexp.new("((http|https):\/\/)?edge.simplereach.com.*")
-  ALL_JS_FILES_REGEX = Regexp.new(".*.js")
-
+  ALL_JS_FILES_REGEX = Regexp.new(".*.js.*")
 
   def initialize(url, options = {})
     @url = url
