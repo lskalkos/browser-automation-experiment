@@ -1,5 +1,6 @@
 describe "Standard Implementation", :type => :feature do
   url = ENV["URL_UNDER_TEST"]
+  pid = ENV["PID_UNDER_TEST"]
 
   before(:all) do
     EdgeTest.run(url)
@@ -95,6 +96,12 @@ describe "Standard Implementation", :type => :feature do
       end
 
       describe 'mobile/desktop comparison' do
+        if pid
+          it 'pid matches supplied pid' do
+            expect(@desktop_test.request_parameters["pid"]).to eq(pid)
+            expect(@mobile_test.request_parameters["pid"]).to eq(pid)
+          end
+        end
         it 'mobile and desktop parameters are the same' do
           EdgeTest::COMPARISON_PARAMS.each do |p|
             if @mobile_test.request_parameters[p] == @desktop_test.request_parameters[p]
