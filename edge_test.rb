@@ -137,11 +137,15 @@ class EdgeTest
   end
 
   def n_request_fired?
-    har.entries.select{|e| e.request.url.include?('edge.simplereach.com/n?')}.length >= 1
+    entries.select{|e| e.request.url.include?('edge.simplereach.com/n?')}.length >= 1
   end
 
   def x_request_fired?
-    har.entries.select{|e| e.request.url.include?('edge.simplereach.com/x?')}.length >= 1
+    entries.select{|e| e.request.url.include?('edge.simplereach.com/x?')}.length >= 1
+  end
+
+  def t_request_fired?
+    entries.select{|e| e.request.url.include?('edge.simplereach.com/t?')}.length >= 1
   end
 
   def begin_test
