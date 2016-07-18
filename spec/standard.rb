@@ -15,8 +15,8 @@ describe "Standard Implementation", :type => :feature do
   
   describe 'standard tests' do
     before(:all) do
-      @desktop_test = EdgeTest.new(url)
-      @mobile_test = EdgeTest.new(url, {driver: :mobile_chrome})
+      @desktop_test = EdgeTest.new(url, {page_ref: "desktop"})
+      @mobile_test = EdgeTest.new(url, {driver: :mobile_chrome, page_ref: "mobile"})
     end
     context 'desktop' do
       before(:all) do

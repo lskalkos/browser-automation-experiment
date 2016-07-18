@@ -8,6 +8,7 @@ require 'uri'
 
 class EdgeTest
   attr_accessor :url, :driver, :session
+  attr_reader :page_ref
   COMPARISON_PARAMS = ["title", "url", "date", "pid", "tags", "channels", "authors"]
   EDGE_REGEX = Regexp.new("((http|https):\/\/)?edge.simplereach.com.*")
   ALL_JS_FILES_REGEX = Regexp.new(".*.js.*")
@@ -15,6 +16,7 @@ class EdgeTest
   def initialize(url, options = {})
     @url = url
     @driver = options[:driver] || :desktop_chrome
+    @page_ref = options[:page_ref]
     Capybara.default_driver = driver
     EdgeTest.proxy.new_har("#{url}", capture_content: true)
     @session = Capybara::Session.new(driver)
@@ -90,8 +92,20 @@ class EdgeTest
     har_entries.first
   end
 
+  def har_entries_by_page_ref
+    har_entries.select{|e| e.pageref == page_ref } if page_ref
+  end
+
+  def entries
+    if page_ref
+      har_entries_by_page_ref
+    else
+      har_entries
+    end
+  end
+
   def edge_requests
-    @edge_requests ||= har_entries.select{|e| e.request.url.include?('edge.simplereach') }
+    @edge_requests ||= entries.select{|e| e.request.url.include?('edge.simplereach') }
   end
 
   def x_requests
@@ -131,6 +145,11 @@ class EdgeTest
   end
 
   def begin_test
+    create_page_ref
     session.visit(url)
+  end
+
+  def create_page_ref
+    self.class.proxy.new_page(page_ref) if page_ref
   end
 end
