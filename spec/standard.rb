@@ -26,7 +26,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       after(:all) do
-        @desktop_test.session.driver.browser.close
+        @desktop_test.shutdown_test
       end
 
       it 'page does not 404' do
@@ -65,7 +65,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       after(:all) do
-        @mobile_test.session.driver.browser.close
+        @mobile_test.shutdown_test
       end
 
       it 'page does not 404' do
@@ -130,7 +130,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       after(:all) do
-        @query_param_desktop_test.session.driver.browser.close
+        @query_param_desktop_test.shutdown_test
       end
 
       it 'url does not change' do
@@ -158,7 +158,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       after(:all) do
-        @query_param_mobile_test.session.driver.browser.close
+        @query_param_mobile_test.shutdown_test
       end
 
       it 'url does not change' do
@@ -195,7 +195,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       after(:all) do
-        @slash_desktop_test.session.driver.browser.close
+        @slash_desktop_test.shutdown_test
       end
 
       it 'url does not change' do
@@ -217,7 +217,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       after(:all) do
-        @slash_mobile_test.session.driver.browser.close
+        @slash_mobile_test.shutdown_test
       end
 
       it 'url does not change' do
@@ -243,7 +243,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       after(:all) do
-        @https_desktop_test.session.driver.browser.close
+        @https_desktop_test.shutdown_test
       end
 
       it 'url does not change if visited with HTTPS' do
@@ -273,7 +273,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       after(:all) do
-        @http_desktop_test.session.driver.browser.close
+        @http_desktop_test.shutdown_test
       end
 
       it 'url does not change if visited with HTTP' do

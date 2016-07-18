@@ -153,4 +153,8 @@ class EdgeTest
   def create_page_ref
     self.class.proxy.new_page(page_ref) if page_ref
   end
+
+  def shutdown_test
+    session.driver.browser.close
+  end
 end
