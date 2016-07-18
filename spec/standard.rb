@@ -190,7 +190,6 @@ describe "Standard Implementation", :type => :feature do
         end
 
         @slash_desktop_test = EdgeTest.new(new_url, {driver: :desktop_chrome})
-        puts "Visiting #{new_url}"
         @slash_desktop_test.begin_test
         wait.until{ @slash_desktop_test.n_request_fired? }
       end
@@ -213,7 +212,6 @@ describe "Standard Implementation", :type => :feature do
         end
 
         @slash_mobile_test = EdgeTest.new(new_url, {driver: :mobile_chrome})
-        puts "Visiting #{new_url}"
         @slash_mobile_test.begin_test
         wait.until{ @slash_mobile_test.n_request_fired? }
       end
@@ -241,9 +239,7 @@ describe "Standard Implementation", :type => :feature do
         end
 
         @https_desktop_test = EdgeTest.new(https_url, {driver: :desktop_chrome})
-        puts "Visiting #{https_url}"
         @https_desktop_test.begin_test
-        wait.until{ @https_desktop_test.n_request_fired? }
       end
 
       after(:all) do
@@ -252,6 +248,7 @@ describe "Standard Implementation", :type => :feature do
 
       it 'url does not change if visited with HTTPS' do
         if @https_desktop_test.site_request.response.status == 200
+          wait.until{ @https_desktop_test.n_request_fired? }
           expect(@https_desktop_test.request_parameters["url"]).to eq(url)
         else
           puts "HTTPS not available"
@@ -271,7 +268,6 @@ describe "Standard Implementation", :type => :feature do
         end
 
         @http_desktop_test = EdgeTest.new(http_url, {driver: :desktop_chrome})
-        puts "Visiting #{http_url}"
         @http_desktop_test.begin_test
         wait.until{ @http_desktop_test.n_request_fired? }
       end

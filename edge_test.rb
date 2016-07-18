@@ -145,6 +145,7 @@ class EdgeTest
   end
 
   def begin_test
+    puts "Visiting #{url}"
     create_page_ref
     session.visit(url)
   end
