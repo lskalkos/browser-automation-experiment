@@ -234,17 +234,17 @@ describe "Standard Implementation", :type => :feature do
   context 'HTTP vs. HTTPS' do
     context 'HTTPS' do
       before(:all) do
+        @continue_https_test = true
         if url.include?('http://')
           stripped_url = url.slice(7, url.length)
           https_url = "https://#{stripped_url}"
         elsif url.include?('https://')
-          https_url = url
+          @continue_https_test = false
         else
           https_url = "https://#{url}"
         end
 
         @https_desktop_test = EdgeTest.new(https_url, {driver: :desktop_chrome})
-        @continue_https_test = true
         begin
           @https_desktop_test.begin_test
         rescue Net::ReadTimeout
@@ -268,8 +268,9 @@ describe "Standard Implementation", :type => :feature do
 
     context 'HTTP' do
       before(:all) do
+          @continue_http_test = true
         if url.include?('http://')
-          http_url = url
+          @continue_http_test = false
         elsif url.include?('https://')
           stripped_url = url.slice(8, url.length)
           http_url = "http://#{stripped_url}"
@@ -286,7 +287,7 @@ describe "Standard Implementation", :type => :feature do
         @http_desktop_test.shutdown_test
       end
 
-      it 'url does not change if visited with HTTP' do
+      it 'url does not change if visited with HTTP', if: @continue_http_test do
         expect(@http_desktop_test.request_parameters["url"]).to eq(url)
       end
     end
