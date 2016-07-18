@@ -129,4 +129,8 @@ class EdgeTest
   def x_request_fired?
     har.entries.select{|e| e.request.url.include?('edge.simplereach.com/x?')}.length >= 1
   end
+
+  def begin_test
+    session.visit(url)
+  end
 end
