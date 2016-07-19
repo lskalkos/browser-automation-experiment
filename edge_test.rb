@@ -88,8 +88,8 @@ class EdgeTest
     har.entries
   end
 
-  def site_request
-    har_entries.first
+  def site_entry
+    entries.first
   end
 
   def har_entries_by_page_ref
@@ -152,6 +152,17 @@ class EdgeTest
     puts "Visiting #{url}"
     create_page_ref
     session.visit(url)
+    check_redirect
+  end
+
+  def check_redirect
+    if site_entry.response.status == 302
+      redirect_url = site_entry.response.redirecturl
+      host = URI.parse(redirect_url).host
+      new_url_to_whitelist = Regexp.new("((http|https):\/\/)?#{host}.*")
+      self.class.proxy.whitelist([EDGE_REGEX, new_url_to_whitelist, ALL_JS_FILES_REGEX], 404)
+      session.visit(site_entry.response.redirecturl)
+    end
   end
 
   def create_page_ref
