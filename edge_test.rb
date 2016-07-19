@@ -174,4 +174,12 @@ class EdgeTest
   def shutdown_test
     session.driver.browser.close
   end
+
+  def self.url_https?
+    parsed_url.scheme == "https"
+  end
+
+  def self.url_http?
+    parsed_url.scheme == "http"
+  end
 end
