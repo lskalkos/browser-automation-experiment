@@ -111,7 +111,7 @@ describe "Standard Implementation", :type => :feature do
     end
   end
 
-  context 'adding query parameters to the url' do
+  describe 'adding query parameters to the url' do
     query_string = "SRQuery=true"
 
     context 'desktop' do
@@ -172,7 +172,7 @@ describe "Standard Implementation", :type => :feature do
     end
   end
 
-  context 'adding or removing / from the url' do
+  describe 'adding or removing / from the url' do
     context 'desktop' do
       before(:all) do
         if url[-1] === '/'
@@ -197,7 +197,7 @@ describe "Standard Implementation", :type => :feature do
         @slash_desktop_test.shutdown_test
       end
 
-      it 'url does not change', if: @continue_slash_desktop_test do
+      it 'url does not change' do
         expect(@slash_desktop_test.request_parameters["url"]).to eq(url)
       end
     end
@@ -225,13 +225,13 @@ describe "Standard Implementation", :type => :feature do
         @slash_mobile_test.shutdown_test
       end
 
-      it 'url does not change', if: @continue_slash_mobile_test do
+      it 'url does not change' do
         expect(@slash_mobile_test.request_parameters["url"]).to eq(url)
       end
     end
   end
 
-  context 'HTTP vs. HTTPS' do
+  describe 'HTTP vs. HTTPS' do
     context 'HTTPS' do
       before(:all) do
         @continue_https_test = true
@@ -256,8 +256,8 @@ describe "Standard Implementation", :type => :feature do
         @https_desktop_test.shutdown_test
       end
 
-      it 'url does not change if visited with HTTPS', if: @continue_https_test do
-        if @https_desktop_test.site_request.response.status == 200
+      it 'url does not change if visited with HTTPS' do
+        if @https_desktop_test.site_entry.response.status == 200
           wait.until{ @https_desktop_test.n_request_fired? }
           expect(@https_desktop_test.request_parameters["url"]).to eq(url)
         else
@@ -268,7 +268,7 @@ describe "Standard Implementation", :type => :feature do
 
     context 'HTTP' do
       before(:all) do
-          @continue_http_test = true
+        @continue_http_test = true
         if url.include?('http://')
           @continue_http_test = false
         elsif url.include?('https://')
@@ -287,7 +287,7 @@ describe "Standard Implementation", :type => :feature do
         @http_desktop_test.shutdown_test
       end
 
-      it 'url does not change if visited with HTTP', if: @continue_http_test do
+      it 'url does not change if visited with HTTP' do
         expect(@http_desktop_test.request_parameters["url"]).to eq(url)
       end
     end
