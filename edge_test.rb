@@ -24,16 +24,20 @@ class EdgeTest
 
   def self.run(url)
     server.start
-    whitelist(url)
+    whitelist_requests(url)
     setup_drivers
   end
 
-  def self.whitelist(url)
-    host = URI.parse(url).host
-    url_to_whitelist = Regexp.new("((http|https):\/\/)?#{host}.*")
-    proxy.whitelist([EDGE_REGEX, url_to_whitelist, ALL_JS_FILES_REGEX], 404)
+  def self.whitelist_requests(url)
+    proxy.whitelist([EDGE_REGEX, url_pattern_to_whitelist(url), ALL_JS_FILES_REGEX], 404)
   end
 
+  def self.url_pattern_to_whitelist(url)
+    host = URI.parse(url).host
+    formatted_host = host.start_with?('www.') ? host[4..-1] : host
+    Regexp.new("((http|https):\/\/)?(www.)?(mobile.|m.)?#{formatted_host}.*")
+  end
+  
   def self.stop
     proxy.clear_whitelist
     proxy.close
@@ -152,17 +156,6 @@ class EdgeTest
     puts "Visiting #{url}"
     create_page_ref
     session.visit(url)
-    check_redirect
-  end
-
-  def check_redirect
-    if site_entry.response.status == 302
-      redirect_url = site_entry.response.redirecturl
-      host = URI.parse(redirect_url).host
-      new_url_to_whitelist = Regexp.new("((http|https):\/\/)?#{host}.*")
-      self.class.proxy.whitelist([EDGE_REGEX, new_url_to_whitelist, ALL_JS_FILES_REGEX], 404)
-      session.visit(site_entry.response.redirecturl)
-    end
   end
 
   def create_page_ref
