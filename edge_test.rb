@@ -23,28 +23,23 @@ class EdgeTest
   end
 
   def self.run(url)
-    @@url_under_test = url
     server.start
-    whitelist_requests
+    whitelist_requests(url)
     setup_drivers
   end
 
-  def self.whitelist_requests
-    proxy.whitelist([EDGE_REGEX, url_pattern_to_whitelist, ALL_JS_FILES_REGEX], 404)
+  def self.whitelist_requests(url)
+    proxy.whitelist([EDGE_REGEX, url_pattern_to_whitelist(url), ALL_JS_FILES_REGEX], 404)
   end
 
-  def self.url_pattern_to_whitelist
-    host = parsed_url.host
+  def self.url_pattern_to_whitelist(url)
+    host = parsed_url(url).host
     formatted_host = host.start_with?('www.') ? host[4..-1] : host
     Regexp.new("((http|https):\/\/)?(www.)?(mobile.|m.)?#{formatted_host}.*")
   end
 
-  def self.parsed_url
-    @@parsed_url ||= URI.parse(url_under_test)
-  end
-
-  def self.url_under_test
-    @@url_under_test
+  def self.parsed_url(url)
+    URI.parse(url)
   end
 
   def self.stop
@@ -175,11 +170,11 @@ class EdgeTest
     session.driver.browser.close
   end
 
-  def self.url_https?
-    parsed_url.scheme == "https"
+  def self.url_https?(url)
+    parsed_url(url).scheme == "https"
   end
 
-  def self.url_http?
-    parsed_url.scheme == "http"
+  def self.url_http?(url)
+    parsed_url(url).scheme == "http"
   end
 end

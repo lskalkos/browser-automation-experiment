@@ -239,7 +239,7 @@ describe "Standard Implementation", :type => :feature do
   end
 
   describe 'HTTP vs. HTTPS' do
-    context 'HTTPS' do
+    context 'HTTPS', unless: EdgeTest.url_https?(url) do
       before(:all) do
         @continue_https_test = true
         if url.include?('http://')
@@ -273,7 +273,7 @@ describe "Standard Implementation", :type => :feature do
       end
     end
 
-    context 'HTTP' do
+    context 'HTTP', unless: EdgeTest.url_http?(url) do
       before(:all) do
         @continue_http_test = true
         if url.include?('http://')
