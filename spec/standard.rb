@@ -4,15 +4,12 @@ describe "Standard Implementation", :type => :feature do
 
   before(:all) do
     EdgeTest.run(url)
-    puts "Beginning QA for #{url}"
   end
 
   after(:all) do
-    EdgeTest.stop
-    puts "Finished QA for #{url}"
+    EdgeTest.stop(url)
   end
 
-  
   describe 'standard tests' do
     before(:all) do
       @desktop_test = EdgeTest.new(url, {page_ref: "desktop"})
@@ -34,7 +31,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       it 'has a successful response' do
-        expect(@desktop_test.n_requests.first.response.status).to eq(200)
+        expect(@desktop_test.n_response.status).to eq(200)
       end
 
       it 'time on site fires' do
@@ -42,14 +39,14 @@ describe "Standard Implementation", :type => :feature do
       end
 
       it 'date is valid' do
-        expect{ Date.parse(@desktop_test.request_parameters["date"]) }.not_to raise_error
+        expect{ Date.parse(@desktop_test.request_date) }.not_to raise_error
       end
 
       it 'n response does not error' do
-        if (@desktop_test.n_requests.first.response.content.text.include?("error"))
-          puts "Error response: #{@desktop_test.n_requests.first.response.content.text}"
+        if (@desktop_test.n_response.content.text.include?("error"))
+          puts "Error response: #{@desktop_test.n_response.content.text}"
         end
-        expect(@desktop_test.n_requests.first.response.content.text).to_not match("error")
+        expect(@desktop_test.n_response.content.text).to_not match("error")
       end
     end
 
@@ -69,7 +66,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       it 'has a successful response' do
-        expect(@mobile_test.n_requests.first.response.status).to eq(200)
+        expect(@mobile_test.n_response.status).to eq(200)
       end
 
       it 'time on site fires' do
@@ -77,21 +74,21 @@ describe "Standard Implementation", :type => :feature do
       end
 
       it 'date is valid' do
-        expect{ Date.parse(@mobile_test.request_parameters["date"]) }.not_to raise_error
+        expect{ Date.parse(@mobile_test.request_date) }.not_to raise_error
       end
 
       it 'n response does not error' do
-        if (@mobile_test.n_requests.first.response.content.text.include?("error"))
-          puts "Error response: #{@mobile_test.n_requests.first.response.content.text}"
+        if (@mobile_test.n_response.content.text.include?("error"))
+          puts "Error response: #{@mobile_test.n_response.content.text}"
         end
-        expect(@mobile_test.n_requests.first.response.content.text).to_not match("error")
+        expect(@mobile_test.n_response.content.text).to_not match("error")
       end
 
       describe 'mobile/desktop comparison' do
         if pid
           it 'pid matches supplied pid' do
-            expect(@desktop_test.request_parameters["pid"]).to eq(pid)
-            expect(@mobile_test.request_parameters["pid"]).to eq(pid)
+            expect(@desktop_test.request_pid).to eq(pid)
+            expect(@mobile_test.request_pid).to eq(pid)
           end
         end
         it 'mobile and desktop parameters are the same' do
@@ -126,16 +123,16 @@ describe "Standard Implementation", :type => :feature do
       end
 
       it 'url does not change' do
-        expect(@query_param_desktop_test.request_parameters["url"]).to eq(url)
+        expect(@query_param_desktop_test.request_url).to eq(url)
       end
 
       it 'page_url captures query parameters' do
-        expect(@query_param_desktop_test.request_parameters["page_url"]).to match(query_string)
+        expect(@query_param_desktop_test.request_page_url).to match(query_string)
       end
 
       it 'og:url either does not exist or does not change' do
         begin
-          expect(@query_param_desktop_test.session.find('meta[property="og:url"]', visible: false)["content"]).to eq(url)
+          expect(@query_param_desktop_test.og_url).to eq(url)
         rescue Capybara::ElementNotFound
           puts "og:url not found on the page"
         end
@@ -154,16 +151,16 @@ describe "Standard Implementation", :type => :feature do
       end
 
       it 'url does not change' do
-        expect(@query_param_mobile_test.request_parameters["url"]).to eq(url)
+        expect(@query_param_mobile_test.request_url).to eq(url)
       end
 
       it 'page_url captures query parameters' do
-        expect(@query_param_mobile_test.request_parameters["page_url"]).to match(query_string)
+        expect(@query_param_mobile_test.request_page_url).to match(query_string)
       end
 
       it 'og:url either does not exist or does not change' do
         begin
-          expect(@query_param_mobile_test.session.find('meta[property="og:url"]', visible: false)["content"]).to eq(url)
+          expect(@query_param_mobile_test.og_url).to eq(url)
         rescue Capybara::ElementNotFound
           puts "og:url not found on the page"
         end
@@ -199,7 +196,7 @@ describe "Standard Implementation", :type => :feature do
 
       it 'url does not change' do
         if @slash_desktop_test.site_entry.response.status == 200
-          expect(@slash_desktop_test.request_parameters["url"]).to eq(url)
+          expect(@slash_desktop_test.request_url).to eq(url)
         else
           puts "page did not return 200"
         end
@@ -230,7 +227,7 @@ describe "Standard Implementation", :type => :feature do
 
       it 'url does not change' do
         if @slash_mobile_test.site_entry.response.status == 200
-          expect(@slash_mobile_test.request_parameters["url"]).to eq(url)
+          expect(@slash_mobile_test.request_url).to eq(url)
         else
           puts "page did not return 200"
         end
@@ -245,8 +242,6 @@ describe "Standard Implementation", :type => :feature do
         if url.include?('http://')
           stripped_url = url.slice(7, url.length)
           https_url = "https://#{stripped_url}"
-        elsif url.include?('https://')
-          @continue_https_test = false
         else
           https_url = "https://#{url}"
         end
@@ -266,7 +261,7 @@ describe "Standard Implementation", :type => :feature do
       it 'url does not change if visited with HTTPS' do
         if @https_desktop_test.site_entry.response.status == 200
           wait.until{ @https_desktop_test.n_request_fired? }
-          expect(@https_desktop_test.request_parameters["url"]).to eq(url)
+          expect(@https_desktop_test.request_url).to eq(url)
         else
           puts "HTTPS not available"
         end
@@ -275,10 +270,7 @@ describe "Standard Implementation", :type => :feature do
 
     context 'HTTP', unless: EdgeTest.url_http?(url) do
       before(:all) do
-        @continue_http_test = true
-        if url.include?('http://')
-          @continue_http_test = false
-        elsif url.include?('https://')
+        if url.include?('https://')
           stripped_url = url.slice(8, url.length)
           http_url = "http://#{stripped_url}"
         else
@@ -295,7 +287,7 @@ describe "Standard Implementation", :type => :feature do
       end
 
       it 'url does not change if visited with HTTP' do
-        expect(@http_desktop_test.request_parameters["url"]).to eq(url)
+        expect(@http_desktop_test.request_url).to eq(url)
       end
     end
   end

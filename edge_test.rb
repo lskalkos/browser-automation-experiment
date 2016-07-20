@@ -23,6 +23,7 @@ class EdgeTest
   end
 
   def self.run(url)
+    puts "Beginning QA for #{url}"
     server.start
     whitelist_requests(url)
     setup_drivers
@@ -42,9 +43,10 @@ class EdgeTest
     URI.parse(url)
   end
 
-  def self.stop
+  def self.stop(url)
     proxy.clear_whitelist
     proxy.close
+    puts "Finished QA for #{url}"
   end
 
   def self.server
@@ -132,12 +134,36 @@ class EdgeTest
     @event_requests ||= edge_requests.select{|e| e.request.url.include?('/event?')}
   end
 
+  def n_entry
+    @n_entry ||= n_requests.first
+  end
+
+  def n_response
+    @n_response ||= n_entry.response
+  end
+
   def n_request
-    @n_request ||= n_requests.first
+    @n_request ||= n_entry.request
   end
 
   def query_string
-    @query_string ||= n_request.request.query_string if n_request
+    @query_string ||= n_request.query_string if n_request
+  end
+
+  def request_url
+    request_parameters["url"]
+  end
+
+  def request_page_url
+    request_parameters["page_url"]
+  end
+
+  def request_pid
+    request_parameters["pid"]
+  end
+
+  def request_date
+    request_parameters["date"]
   end
 
   def request_parameters
@@ -176,5 +202,9 @@ class EdgeTest
 
   def self.url_http?(url)
     parsed_url(url).scheme == "http"
+  end
+
+  def og_url
+    session.find('meta[property="og:url"]', visible: false)["content"]
   end
 end
